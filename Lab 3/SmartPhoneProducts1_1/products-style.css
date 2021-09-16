@@ -1,0 +1,51 @@
+/* Typography */
+h1, h2 {
+    font-family: 'Oswald', sans;
+    color: black;
+}
+/* General */
+h1 {
+    background-color: beige; 
+}
+body {
+    width: 800px;
+    margin: 0 auto;
+}
+main {
+    background-image: url(Images/phone_globe.jpeg);
+    background-color: ivory;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center; 
+}
+/* block styling */
+main {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;  
+}
+/* Form styling */
+div {
+    border: 5px solid black;
+    display: flex;
+}
+
+.rotate img
+{
+  animation: rotation .1s infinite linear;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+/* Styling the products display */
+img {
+    width: 200px;
+    height: 200px;
+}
