@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smartphone Products</title>
+    <link rel="stylesheet" href="products-style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald|Open+Sans">
+    <style type="text/css">
+        h1,
+        h2 {
+            text-align: center;
+        }
+    </style>
+    <style id="localStyle"></style>
+</head>
+
+<body>
+    <header>
+        <h1 id="myHead">
+            <script>
+                var hits = 10;
+                var spins = 20;
+                var first_name="Nate";
+                var last_name="Moylan";
+                var store_name = "<p style=font-size:30pt>" +"<B>" +first_name + "</b> <i>" + last_name + "'s Used Smart Phone Store'</P";
+                document.write(store_name);
+            </script>
+        </h1>
+        <p>
+            Hits: <span id="hits_span">0</span>
+            Spins: <span id="spins_span">0</span>
+            Hit/Spin:<span id="hit_spin_span"> 0</span>
+        </p>
+        <input id='speedSlider' type='range' min=".1" max="5" step=".1" style="direction: rtl;"
+            onchange="localStyle.innerHTML = '.rotate img {animation-duration: ' + speedSlider.value + 's;}';">
+    </header>
+    <div>
+        <main>
+            <section class="item" onmouseover="
+            className='item rotate'
+            spins += 1;
+            spins_span.innerHTML = spins;
+            hit_spin_span.innerHTML = (hits_span.innerHTML/spins_span.innerHTML);
+        
+        "onclick="
+            hits += 1;
+            hits_span.innerHTML = hits;
+            hit_spin_span.innerHTML = (hits_span.innerHTML/spins_span.innerHTML);
+            className='item' ">
+
+                <h2>HTC</h2>
+                <p style="text-align: center; font: 1em Open Sans; font-size: x-large;">$400.00</p>
+                <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/HTC.jpg">
+            </section>
+
+            <section class="item" onmouseover="className='item rotate'" onclick="className='item'">
+                <h2>Apple</h2>
+                <p style="text-align: center; font: 1em Open Sans; font-size: x-large;">$750.00</p>
+                <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/iphone-3gs.jpg">
+            </section>
+
+            <section class="item" onmouseover="className='item rotate'" onclick="className='item'">
+                <h2>Nokia</h2>
+                <p style="text-align: center; font: 1em Open Sans; font-size: x-large;">$35.00</p>
+                <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/Nokia.jpg">
+            </section>
+
+            <section class="item" onmouseover="className='item rotate'" onclick="className='item'">
+                <h2>Samsung</h2>
+                <p style="text-align: center; font: 1em Open Sans; font-size: x-large;">$45.00</p>
+                <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/Samsung.jpg">
+            </section>
+
+            <section class="item" onmouseover="className='item rotate'" onclick="className='item'">
+                <h2>Blackberry</h2>
+                <p style="text-align: center; font: 1em Open Sans; font-size: x-large;">$10.00</p>
+                <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/Blackberry.jpg">
+            </section>
+        </main>
+    </div>
+    
+    <footer> 
+        <script>
+       var now =new Date ();
+        document.write(`
+
+        <table border="1" style="margin-left: auto; margin-right: auto; text-align: center;">
+            <tr><th colspan="2"><h1>Your One Stop For Used Phones - ${first_name[0]}.${last_name[0]}.'s</h1></th></tr>
+            <tr><td>1.</td><td><br />Copyright @ ${first_name + ' ' + last_name}</td></tr>
+            <tr><td>2.</td><td>${now.getFullYear()}</td></tr>
+            <tr><td>3.</td><td>11:15 AM</td></tr>
+        </table>
+
+        `);
+    </script>
+    </footer>
+   
+</body>
+
+</html>
