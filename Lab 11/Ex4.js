@@ -49,3 +49,7 @@ pieces.forEach(checkIt);
 console.log("=====");
 
 pieces.forEach( (elem, index) => {console.log(`${index}: ${elem} ${(isNonNegInt(elem) ? 'a' : 'not a')} valid quantity`);})
+
+pieces.forEach(elem, index) => {
+    console.log("In this console I will talk about parameters and the WOD and how to connect the two")
+}
