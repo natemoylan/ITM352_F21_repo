@@ -1,6 +1,6 @@
-var month = 'February';
-var day = 23;
-var year = 2000;
+var month = 'November';
+var day = 29;
+var year = 1998;
 
 step1 = (month == 'January'|| month == 'February')?(year - 1):year;
 step2 = step1 + parseInt(step1/4);
