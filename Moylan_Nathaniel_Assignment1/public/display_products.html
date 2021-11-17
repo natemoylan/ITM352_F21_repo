@@ -1,6 +1,8 @@
 <!--This page loads the display_products.html-->
 <script src="./products.js" type="text/javascript"></script>
+
 <script>
+
 // Validate that an input value is a non negative integer
 // inputstring is the input string; returnErrors indicates how the function returns
 // true means return the array. Flase means return a boolean.    
@@ -77,8 +79,8 @@ function checkQuantityTextbox(theTextbox) {
                         <h3 label id ="quantity_available${i}"><i>Available: ${products[i].quantity_available} in stock!</i></h3></label>
                         <h4>$${products[i].price.toFixed(2)}</h4>
                         <img src="./images/${products[i].image}" class="img">
-                        <label id ="quantity${i}_label">Number of Items: </label>
-                        <input type="text" placeholder="0" name="quantity${i}" onkeyup="checkQuantityTextbox(this);"> 
+                       <h5><label id ="quantity${i}_label">Number of Items: </label></h5>
+                        <h5><input type="text" placeholder="0" name="quantity${i}" onkeyup="checkQuantityTextbox(this);"></h5> 
             
                         </section>`);
                     }
