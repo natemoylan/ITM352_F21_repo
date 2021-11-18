@@ -9,12 +9,14 @@
 function isNonNegInt(inputstring, returnErrors = false) {
     errors = []; // assume no errors at first
     if(Number(inputstring) != inputstring) {
-        errors.push('Not a number!'); // Check if string is a number value
+        errors.push('<font color="red">Not a number!</font>'); // Check if string is a number value
     }
     else 
     {
-        if(inputstring < 0) errors.push('Negative value!'); // Check if it is non-negative
-        if(parseInt(inputstring) != inputstring) errors.push('Not an integer!'); // Check that it is an integer
+        if (inputstring > 50) errors.push('<font color="red">Only 50 items in stock!</font>');    
+        if (inputstring == 0) errors.push('<font color="red">Enter a Number!</font>')
+        if(inputstring < 0) errors.push('<font color="red">Negative value!</font>'); // Check if it is non-negative
+        if(parseInt(inputstring) != inputstring) errors.push('<font color="red">Not an integer!</font>'); // Check that it is an integer
     }           
     return returnErrors ? errors : (errors.length == 0);
 } 
@@ -23,9 +25,36 @@ function isNonNegInt(inputstring, returnErrors = false) {
 function checkQuantityTextbox(theTextbox) {
     errors = isNonNegInt(theTextbox.value, true); // setting errors to isNonNegInt
     if (errors.length == 0) errors = ['You want:']; 
-    if (theTextbox.value.trim() == '') errors = ['Please type quantity desired: '];
+    if (theTextbox.value.trim() == '') errors = ['Please type quantity desired: ']; //Input outside the textbox
     document.getElementById(theTextbox.name + '_label').innerHTML = errors.join('<font color="red">, </font>');
 }       
+
+window.onload = function () {
+        let params = (new URL(document.location)).searchParams; // get the query string which has the form data
+        // form was submitted so check that quantities are valid then redirect to invoice if ok.
+        if (params.has('purchase_submit')) { //searches the file for "purchase_submit"
+            // check to if any quantity is invalid, then put alert 
+
+            for (i = 0; i < products.length; i++) {
+                if (params.has(`quantity${i}`)) {
+                    a_qty = params.get(`quantity${i}`);
+                    // make textboxes sticky in case of invalid data
+                    quantity_form[`quantity${i}`].value = a_qty;
+                    checkQuantityTextbox(quantity_form[`quantity${i}`]); // show where the error is
+                }
+            }
+            // alert user of errors if any
+            if (params.has('error')) {
+                var errors = JSON.parse(params.get('error'));
+                let error_str = '';
+                for (err in errors) {
+                    error_str += errors[err] + '\n';
+                }
+                alert(error_str);
+            }
+
+        }
+    }
 
 </script>
 <!DOCTYPE html>
@@ -59,6 +88,9 @@ function checkQuantityTextbox(theTextbox) {
             <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Reviews</a>
         </div>
 
+    <!--Form Processing-->
+        <form name="product_selection_form" action="/process_invoice" method="POST">
+
     <!-- Header (Borrowed from W3 Schools) -->
 
         <header class="w3-container w3-red w3-center" style="padding:128px 16px">
@@ -79,17 +111,13 @@ function checkQuantityTextbox(theTextbox) {
                         <h3 label id ="quantity_available${i}"><i>Available: ${products[i].quantity_available} in stock!</i></h3></label>
                         <h4>$${products[i].price.toFixed(2)}</h4>
                         <img src="./images/${products[i].image}" class="img">
-                       <h5><label id ="quantity${i}_label">Number of Items: </label></h5>
+                        <h5><label id ="quantity${i}_label">Number of Items: </label></h5>
                         <h5><input type="text" placeholder="0" name="quantity${i}" onkeyup="checkQuantityTextbox(this);"></h5> 
             
                         </section>`);
                     }
             </script>
         </main></div>
-
-    <!--Form Processing-->
-
-        <form name="product_selection_form" action="/process_invoice" method="POST">
 
         <input type="submit" value="Purchase!" name="purchase_submit">
         

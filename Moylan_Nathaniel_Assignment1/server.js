@@ -1,12 +1,23 @@
 // This server was a combination of the labs and WODS and examples provided by Prof. Kazman. 
-
+// Borrowed from Lab 13
 var express = require('express');
 var myParser = require("body-parser");
-var fs = require('fs');
-var products = require("./public/products.js");
-var app = express();
+const qs = require('qs'); // Use variable 'qs' (query String) as the loaded module
+var app = express(); 
+var fs = require('fs'); // Loads/ starts up fs system actions
+const{request} = require('express');
 
-app.use(myParser.urlencoded({ extended: true }));
+
+var products = require('./public/products.js'); 
+var querystring = require("querystring");
+
+// Monitors requests
+app.all('*', function (request, response, next) { // Links to my request POST
+    console.log(request.method + ' to ' + request.path); // Write the request method in the console and path
+    next(); // Continue
+});
+
+
 
 // Validate that an input value is a non negative integer
 // inputstring is the input string; returnErrors indicates how the function returns
@@ -14,12 +25,14 @@ app.use(myParser.urlencoded({ extended: true }));
 function isNonNegInt(inputstring, returnErrors = false) {
     errors = []; // assume no errors at first
     if(Number(inputstring) != inputstring) {
-        errors.push('Not a number!'); // Check if string is a number value
+        errors.push('<font color="red">Not a number!</font>'); // Check if string is a number value
     }
     else 
     {
-        if(inputstring < 0) errors.push('Negative value!'); // Check if it is non-negative
-        if(parseInt(inputstring) != inputstring) errors.push('Not an integer!'); // Check that it is an integer
+        if (inputstring > 50) errors.push('<font color="red">Only 50 items in stock!</font>'); // Checks if qty is within the available products
+        if (inputstring == 0) errors.push('<font color="red">Enter a Number!</font>') // Checks if it is a Number
+        if(inputstring < 0) errors.push('<font color="red">Negative value!</font>'); // Check if it is non-negative
+        if(parseInt(inputstring) != inputstring) errors.push('<font color="red">Not an integer!</font>'); // Check that it is an integer
     }           
     return returnErrors ? errors : (errors.length == 0);
 } 
@@ -32,11 +45,34 @@ function checkQuantityTextbox(theTextbox) {
     document.getElementById(theTextbox.name + '_label').innerHTML = errors.join('<font color="red">, </font>');
 }       
 
+app.use(myParser.urlencoded({ extended: true }));
+
+// Displays the invoice.html to the client
+// Since the purchase button acts as a GET request, it should be a app.post on the server 
+
+
+app.post('/process_invoice', function (request, response, next) {
+    var errors={};
+    
+        
+     
+    
+    //if the data is valid, send them to the invoice, otherwise send them back to index
+    if(Object.keys(errors).length == 0) {
+        response.redirect('./invoice.html?'+ qs.stringify(request.body)); //move to invoice page if no errors
+    }else{
+        response.redirect('./index?'+ qs.stringify(request.body));
+    }
+    });
+
+
+
+
 
 // Displays display_products.html on the browser to the client.
 // GETS the display_products.html
-app.get("/display_products", function (request, response) {
-    var contents = fs.readFileSync('./views/display_products.html', 'utf8');
+app.get("/index", function (request, response, next) {
+    var contents = fs.readFileSync('./views/index.html', 'utf8');
     response.send(eval('`' + body + '`')); // render template string
 
     // This function creates a for loop to generate the products for the page
@@ -56,7 +92,7 @@ app.get("/display_products", function (request, response) {
             </section>`;
 
             // Applies the NonNegInt and checkQuantityTextbox function to make sure the quantity inputted by the user is validated. 
-            if (typeof req.query['purchase_submit'] != 'undefined') {
+            if (typeof request.query['purchase_submit'] != 'undefined') {
         
                 for (i = 0; i < products.length; i++) {
                     if (params.has(`quantity${i}`)) {
@@ -71,7 +107,7 @@ app.get("/display_products", function (request, response) {
                     }
                 }
                 
-                console.log(Date.now() + ': Purchase made from ip ' + req.ip + ' data: ' + JSON.stringify(req.query));
+                console.log(Date.now() + ': Purchase made from ip ' + req.ip + ' data: ' + JSON.stringify(request.query));
             }
             next();
         }
@@ -80,63 +116,8 @@ app.get("/display_products", function (request, response) {
     }
 });
 
-app.post("/process_invoice", function (request, response, next) {
-    let POST = request.body;
-    if(typeof POST['purchase_submit'] == 'undefined') { // Checks if there is a quantity in the txtbox
-        console.log('No purchase form data'); // Sends message to user
-        next();
-    } 
 
-    console.log(Date.now() + ': Purchase made from ip ' + request.ip + ' data: ' + JSON.stringify(POST));
 
-    var contents = fs.readFileSync('./public/invoice.html', 'utf8');
-    response.send(eval('`' + contents + '`')); // render template string
-
-    function display_invoice_table_rows() {
-        subtotal = 0;
-        str = '';
-        for (i = 0; i < products.length; i++) {
-            a_qty = params.get(`quantity${i}`);
-            if(typeof POST[`quantity${i}`] != 'undefined') {
-                a_qty = POST[`quantity${i}`];
-            }
-            if (a_qty > 0) {
-                // product row
-                extended_price =a_qty * products[i].price
-                subtotal += extended_price;
-                str += (`
-      <tr>
-        <td width="43%">${products[i].brand}</td>
-        <td align="center" width="11%">${a_qty}</td>
-        <td width="13%">\$${products[i].price}</td>
-        <td width="54%">\$${extended_price}</td>
-      </tr>
-      `);
-            }
-        }        
-
-        // Compute tax
-        tax_rate = 0.0575;
-        tax = tax_rate * subtotal;
-
-        // Compute shipping
-        if (subtotal <= 50) {
-            shipping = 2;
-        }
-        else if (subtotal <= 100) {
-            shipping = 5;
-        }
-        else {
-            shipping = 0.05 * subtotal; // 5% of subtotal
-        }
-
-        // Compute grand total
-        total = subtotal + tax + shipping;
-        
-        return str;
-    }
-
-});
 
 
 
