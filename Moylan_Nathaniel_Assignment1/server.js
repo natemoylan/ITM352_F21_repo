@@ -1,15 +1,10 @@
 // This server was a combination of the labs and WODS and examples provided by Prof. Kazman. 
 // Borrowed from Lab 13
-var express = require('express');
-var myParser = require("body-parser");
-const qs = require('qs'); // Use variable 'qs' (query String) as the loaded module
-var app = express(); 
-var fs = require('fs'); // Loads/ starts up fs system actions
-const{request} = require('express');
 
+var express = require('express'); //code for server
+var qs = require('querystring');
+var app = express();
 
-var products = require('./public/products.js'); 
-var querystring = require("querystring");
 
 // Monitors requests
 app.all('*', function (request, response, next) { // Links to my request POST
@@ -45,29 +40,10 @@ function checkQuantityTextbox(theTextbox) {
     document.getElementById(theTextbox.name + '_label').innerHTML = errors.join('<font color="red">, </font>');
 }       
 
-app.use(myParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 
 // Displays the invoice.html to the client
 // Since the purchase button acts as a GET request, it should be a app.post on the server 
-
-
-app.post('/process_invoice', function (request, response, next) {
-    var errors={};
-    
-        
-     
-    
-    //if the data is valid, send them to the invoice, otherwise send them back to index
-    if(Object.keys(errors).length == 0) {
-        response.redirect('./invoice.html?'+ qs.stringify(request.body)); //move to invoice page if no errors
-    }else{
-        response.redirect('./index?'+ qs.stringify(request.body));
-    }
-    });
-
-
-
-
 
 // Displays display_products.html on the browser to the client.
 // GETS the display_products.html
@@ -117,18 +93,21 @@ app.get("/index", function (request, response, next) {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+app.post('/process_invoice', function (request, response, next) {
+    //to validate data
+    //error bag
+    var errors={};
+    
+    
+    
+    
+    //if the data is valid, send them to the invoice, otherwise send them back to index
+    if(Object.keys(errors).length == 0) {
+        response.redirect('./invoice.html?'+ qs.stringify(request.body)); //move to invoice page if no errors
+    }else{
+        response.redirect('./index?'+ qs.stringify(request.body));
+    }
+    });
 
 
 app.use(express.static('./public'));
