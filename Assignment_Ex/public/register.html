@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link rel="stylesheet" href="register.css">
+    
+    <style>
+
+        /* Registration page background */
+
+        html {
+            background-image: url(./Images/fball.jpg);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Register Account</h1>
+    <p>Please register an account before purchasing tickets!</p>
+    
+
+    <div id='account'>
+
+        <form method="POST" action="process_register" name="Register">
+
+        <div class="container">
+
+            <!--Full Name Field-->
+            <input type="text" id="fullname" name="fullname" size="40" pattern="[a-zA-Z]+[ ]+[a-zA-Z]+" placeholder="Enter Full Name" required title="Please only letters for your full name!"><br />
+
+            <!--Username Field-->
+            <input type="text" id="username" name="username" size="40" pattern=".[a-z0-9]{3,10}$" placeholder="Enter Username" required title="Username must be between 4 and 10 characters"><br />
+                
+            <!--Email Field-->
+            <input type="email" id="email" name="email" size="40" pattern="[a-z0-9._]+@[a-z0-9]+\.[a-z]{2,}$" placeholder="Enter Email" required title="Please enter a valid email using the format, xxx@xxx.com"><br />
+
+            <!--Password Field-->
+            <input type="password" id="password" name="password" size="40" pattern=".{6,}" placeholder="Enter Password" required title="6 Characters Minimum"><br />
+
+            <!--Repeat Password Field-->
+            <input type="password" id="repeat_password" name="repeat_password" size="40" pattern=".{6,}" placeholder="Repeat Password" required title="Password must match!"><br />
+
+            
+            <input type="submit" value="Register" class="btn">
+
+        </div>
+        </form>
+        <script>
+            Register.action += document.location.search; // Saves the query string from the products _display.html for my invoice.html
+        </script>
+    </div>
+     <!--Button for Returning Members/ Users who have an existing account-->
+     <input type="button" name="olduser" value="Returning Users Click Here!" class="btn2" onclick="window.location='./login.html' + document.location.search;">
+
+</body>
+</html>
