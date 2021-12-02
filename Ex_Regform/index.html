@@ -20,32 +20,32 @@
         <!--Full Name-->
         <div class = "input-group">
             <label for="fullname">Full Name</label>
-            <input type ="text" id ="fullname" placeholder="Full Name" name="fullname">
-            <p>Error Message</p>
+            <input type ="text" id ="fullname" placeholder="Full Name" name="fullname" pattern="[a-zA-Z]+[ ]+[a-zA-Z]+" required title="Full First and last name, letters only">
+            
         </div>
         <!--Username-->
         <div class = "input-group">
             <label for="username">Username</label>
-            <input type ="text" id ="username" placeholder="Username" name="username">
-            <p>Error Message</p>
+            <input type ="text" id ="username" placeholder="Username" name="username" pattern=".[a-z0-9]{3,10}" required title="Minimum: 4 Characters. Maximum: 10 Characters. Numbers and/or Letters Only.">
+            
         </div>
         <!--Email-->
         <div class = "input-group">
             <label for="email">Email</label>
-            <input type ="email" id ="email" placeholder="Email" name="email">
-            <p>Error Message</p>
+            <input type ="email" id ="email" placeholder="Email" name="email" pattern="[a-z0-9._]+@[a-z0-9]+\.[a-z]{3,}$" required title="Please enter a valid email.">
+           
         </div>
         <!--Password-->
         <div class = "input-group">
             <label for="password">Password</label>
-            <input type ="text" id ="password" placeholder="Password" name="password">
-            <p>Error Message</p>
+            <input type ="text" id ="password" placeholder="Password" name="password" pattern=".{6,}" required title="Minimum: 6 Characters">
+          
         </div>
         <!--Confirm Password-->
         <div class = "input-group">
             <label for="password2">Confirm Password</label>
-            <input type ="text" id ="password2" placeholder="Confirm Password" name="password2">
-            <p>Error Message</p>
+            <input type ="text" id ="password2" placeholder="Confirm Password" name="password2" pattern=".{6,}" required title="Minimum: 6 Characters">
+          
         </div>
        
         <button type="submit" class ="btn">Register</button>
@@ -56,8 +56,6 @@
         
     </form>
 
-    <!--Links the reg.js-->
-    <script src="reg.js"></script>
 
 </body>
 

@@ -5,6 +5,13 @@ var app = express();
 var myParser = require("body-parser");
 // npm install query-string in terminal
 var queryString = require("query-string");
+const { URLSearchParams } = require('url');
+var filename = './user_data.json';
+
+
+
+var errors={}; 
+var saved_reg_qty_array; // temporary store user selected quantities until needed for invoice. 
 
 // Monitors all requests
 app.all('*', function (request, response, next) {
@@ -13,21 +20,24 @@ app.all('*', function (request, response, next) {
 });
 
 // Set filename as variable for user_data.json
-var filename = "./user_data.json";
+var filename = './user_data.json';
 
 //Checks if file exists
 if (fs.existsSync(filename)) {
     //Reads user_data.json
     //Moved the require in here from Ex1
-    user_data = require(filename);
-    console.log("User_data = ", user_data);
+    let user_data_str = fs.readFileSync(filename, 'utf-8');
+    var users_reg_data = JSON.parse(user_data_str);
+    console.log("User_data = ", users_reg_data);
 
     //Reads the stats of the file
     fileStats = fs.statSync(filename);
-    console.log("File " + filename + " has " + fileStats.size + " characters");
+    console.log("File" + filename + "has" + fileStats.size + "characters");
 } else {
     console.log("Enter the correct filename");
+    users_reg_data = {};
 }
+
 app.use(express.urlencoded({ extended: true }));
 
 
@@ -37,14 +47,11 @@ app.get("/register", function (request, response) {
     // Give a simple register form
     str = `
     <body>
-
-
     <form action = "/register" method = "POST" name = "register">
     <div class = "container">
         <h1>Register Account</h1>
         <p>Please register an account before purchasing tickets!</p>
        
-
         <!--Full Name-->
         <label for ="fullname"><b>Full Name</b></label>
         <input type="text" placeholder="Enter first and last name" class="form__input" name="fullname" id="fullname" pattern="[a-zA-Z]+[ ]+[a-zA-Z]+" required title="Full First and last name, letters only.">
@@ -64,67 +71,56 @@ app.get("/register", function (request, response) {
 
         <!--Confirm Password-->
         <label for ="confirm_password"><b>Confirm Password</b></label>
-        <input type="confirm_password" placeholder="Re-enter password" class="form__input" name="confirm_password" id="confirm_password" pattern=".{6,}" required title="Minimum: 6 Characters">
-
+        <input type="password" placeholder="Re-enter password" class="form__input" name="confirm_password" id="confirm_password" pattern=".{6,}" required title="Minimum: 6 Characters">
+        
         <br>
         <button type ="submit" class = "reg_btn">Register</button>
-
     </div>
 
         <div class = "container sign_in">
-            <p>Already have an account? <a href ="./login.html">Sign In</a>.</p>
+            <p>Already have an account? <a href ="./public/login.html">Sign In</a>.</p>
         </div>
-
+        
     </form>
+    </body>
         `;
     response.send(str);
 });
 
 
 
+
+
+
 /* Processing Register page */
 
 app.post("/register", function (request, response) {
+    // Setting username to be case insensitive
+    var username = request.body.username.toLowerCase();
 
-    // -------------Acquiring request body---------- //
-    
-    POST = request.body;
+    /* Process Simple Registration Form */
 
-    user_fullname = POST ["fullname"];
-    user_name = POST["username"];
-    user_pass = POST["password"];
-    user_confirm_pass = POST ["confirm_password"];
-    user_email = POST["email"];
+    // Checks if user input is valid 
+    if(typeof users_reg_data[username] != 'undefined'){
+        errors['username_taken'] = `Sorry ${username} is already registered!`
+    } 
+    // Setting the users input within user_reg_data
+    if (typeof users_reg_data[username] == 'undefined' && (request.body['password'] == request.body['confirm_password'])){
+        users_reg_data[username] = {};
+        users_reg_data[username].password = request.body['password'];
+        users_reg_data[username].email = request.body['email'];
+        users_reg_data[username].name = request.body['name']
 
-    console.log("Username = " + user_name + " Email = " + user_email);
+        fs.writeFileSync('./user_data.json', JSON.stringify(users_reg_data));
+        saved_reg_qty_array['username'] = username;
+        let params = new URLSearchParams(saved_reg_qty_array);
 
-     // Creates new entry for user data
-     user_data[user_name] = {};
-     user_data[user_name].fullname = user_fullname
-     user_data[user_name].username = user_name
-     user_data[user_name].password = user_pass;
-     user_data[user_name].email = user_email;
-
-    //Writes user reg into user_data.json
-    data = JSON.stringify(user_data);
-    fs.writeFileSync(filename, data, "utf-8")
-    response.redirect ('register.html')
- 
-
-   
-
-    // -------------Full Name Validation---------- //
-
-
-    // -------------Username Validation---------- //
-
-    // -------------Email Validation---------- //
-
-    // -------------Password Validation---------- //
-
-    // -------------Confirm Password Validation---------- //
-    
-
+        response.redirect('/Receipt' + params.toString());
+        console.log("Sucessfully Registered");
+    } else {
+        response.redirect('./register.html' + params.toString());
+        console.log("not registered");
+    }
 });
 
 
