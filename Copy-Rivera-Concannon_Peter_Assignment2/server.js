@@ -49,15 +49,15 @@ if (fs.existsSync(filename)) {
     //Reads user_data.json
     //Moved the require in here from Ex1
     var data = fs.readFileSync(filename, 'utf-8');
-    var user_data = JSON.parse(data);
-    console.log("User_data = ", user_data);
+    var user_login = JSON.parse(data);
+    console.log("User_data = ", user_login);
 
     //Reads the stats of the file
     fileStats = fs.statSync(filename);
     console.log("File " + filename + " has " + fileStats.size + " characters");
 } else {
     console.log("Enter the correct filename");
-    user_data = {};
+    const user_login = [];
 }
 app.use(express.urlencoded({ extended: true }));
 
@@ -247,7 +247,7 @@ app.post("/Check", function (request, response, next) {
 );
 
 app.get("/login", function (request, response, next) {
-    let POST = request.query;
+    let POST = request.body;
     var body = fs.readFileSync('./views/login.template', 'utf8');
     response.send(eval('`' + body + '`')); //This renders the template string into a readable html format.
     console.log('Login page loaded'); 
@@ -256,13 +256,16 @@ app.get("/login", function (request, response, next) {
 
 app.post("/process_login", function (request, response) {
     // Process login form POST and redirect to logged in page if ok, back to login page if not
-    the_username = request.body['username'].toLowerCase();
-    the_password = request.body['password'];
+    let POST = request.body;
+    the_username = POST['username'].toLowerCase();
+    the_password = POST['password'];
+    console.log(POST)
+
+
     var user_info = get_user_info(the_username);
-    console.log(user_info);
+    console.log("user info;",  user_info);
     if (typeof user_info != 'undefined') {
         if (
-            
             user_info.password == the_password) {
             response.redirect('/Receipt');
         } else {
@@ -278,12 +281,15 @@ app.post("/process_login", function (request, response) {
     function get_user_info(a_username) {
         // go through lines and look for username. If found, returns object with user data, otherwise returns undefined.
         // Format is assumed to be username;password;fullname
-        var user_data = undefined;
-        for(i in lines) {
-            let user_data_array = lines[i].split(';');
-            if(user_data_array[0] == a_username) { // found it!
+        console.log("A username", a_username);
+        var user_data = [];
+        for(i in user_login) {
+            console.log("user login:", user_login[i]);
+            let user_data_array = user_login[i];
+            console.log("UD Array", user_data_array);
+            if(user_data_array[i] == a_username) { // found it!
                 user_data = {'password': user_data_array[1], 'name': user_data_array[2]};
-                break; 
+                console.log("UD", user_data_array);
             }
         }
         return user_data;
