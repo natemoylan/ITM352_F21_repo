@@ -81,18 +81,21 @@ app.post("/process_register", function (request, response) {
     console.log(request.body);
 
     
-
+    // Got from example code from Assignment 2 module
     //assumes no errors at first
     var reg_errors = [];
 
     // Fullname Validation// 
     if(/^[A-Za-z, ]+$/.test(request.body.fullname)){ 
+        console.log('fullname good');
     } 
     else {
         reg_errors['fullname'] = 'Please only use letters for fullname';
+        console.log('fullname bad');
     }
     if(request.body.fullname.length > 30 || request.body.fullname < 1){
         reg_errors['fullname'] = 'Maximum 30 Characters'; 
+        console.log('fullname length is bad')
     }
 
     //Username Validation//
@@ -100,33 +103,43 @@ app.post("/process_register", function (request, response) {
 
     if(request.body.username.length > 10 || request.body.username.length < 4){
         reg_errors['username'] = 'Username should be within 4 and 10 characters.';
+        console.log('username length not good');
     }
     if(typeof user_data[reg_username] != 'undefined'){
         reg_errors ['username'] = 'Sorry, this username is already taken.'; 
+        console.log('username not defined');
     }
     if(typeof user_data[reg_username] == ''){
         reg_errors['username'] = 'Please enter a username.';
+        console.log('username empty');
     }
     if(/^[0-9a-zA-Z]+$/.test(request.body.username)){
+        console.log('username has no other values')
     } else {
         reg_errors['username'] = 'Numbers and letters only please.';
+        console.log('username has other values')
+        
     }
 
     //Email Validation//
     if(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(request.body.email)){
+        console.log('Email good');
     } 
     else {
         reg_errors['email'] = 'Please enter a valid email (Ex: user@gmail.com';
+        console.log('email bad');
     }
 
     //Password Validation//
     if(request.body.password < 6){
         reg_errors['password'] = 'Please make a password longer than 6 characters.';
+        console.log('pass too short')
     }
 
     //Confirm Password Validation 
-    if(request.body.password !== request.body.confirm_password) {
+    if(request.body.password != request.body.confirm_password) {
         reg_errors['confirm_password'] = 'Passwords do not match.';
+        console.log('pass dont match')
     }
 
     // If no errors then save new user data in JSON file and redirect to receipt
@@ -241,66 +254,41 @@ app.get("/login", function (request, response, next) {
 
 });
 
-app.post("/process_login", function (request, response, next) {
-    let POST = request.body;
-
-    var logged_in = {};
-    logged_in['logged in'] = 'User Logged in';
-    //Assume users logged in.
-
-    //Validating user is logged in
-
-/* 
-    user_name= POST.username;
-    user_pass = POST.password;
+app.post("/process_login", function (request, response) {
+    // Process login form POST and redirect to logged in page if ok, back to login page if not
+    the_username = request.body['username'].toLowerCase();
+    the_password = request.body['password'];
+    var user_info = get_user_info(the_username);
+    console.log(user_info);
+    if (typeof user_info != 'undefined') {
+        if (
             
-    //Add and If statement for if the user is/isnt logged in either let the check process happen/ direct them to the login page and then when they sign in/register then they are brought to the cart.
-
-        if (checkLogin(input_username, input_password) == false) {
-            logged_in['not logged in'] = `INVALID LOGIN!`; //This will warn the customer of where their input was invalid
+            user_info.password == the_password) {
+            response.redirect('/Receipt');
         } else {
-            delete logged_in[array];
+            response.redirect('/login');
         }
-
-    qString = query_response.stringify(POST);
-
-    //Add the code to check if the user is logged in or not.
-        if(JSON.stringify(logged_in)=== '{}') {
-//If there logged_in is false then redirect user back to the UHManoaFootballTickets, otherwise send them to the cart.
-            let errObj = { 'error': JSON.stringify(logged_in)};
-            qString += '&' + query_response.stringify(errObj)
-            temp_qty_data = request.body;
-            response.redirect("Receipt" + "?" + qString);
-            console.log("Redirected to Receipt");
-        }else {
-            response.redirect("login" + "?" + qString);
-            console.log("Redirected to product display");
-        }
-
-        */
-       
-        POST = request.body;
-        user_name = POST["username"];
-        user_pass = POST ["password"];
-
-        console.log("Username = " + user_name + "Password = " + user_pass);
-
-        if (user_data[user_name] != undefined){
-            if (user_data[user_name].password == user_pass){
-                // Good login
-                response.redirect('/Receipt');
-            } else{
-                // Bad Login, redirect
-                response.redirect ('/login')
-            }
-        } 
-       
-        next();
+        return;
     }
+    response.send(`${the_username} does not exist`);
 
 
-);
 
+
+    function get_user_info(a_username) {
+        // go through lines and look for username. If found, returns object with user data, otherwise returns undefined.
+        // Format is assumed to be username;password;fullname
+        var user_data = undefined;
+        for(i in lines) {
+            let user_data_array = lines[i].split(';');
+            if(user_data_array[0] == a_username) { // found it!
+                user_data = {'password': user_data_array[1], 'name': user_data_array[2]};
+                break; 
+            }
+        }
+        return user_data;
+    }
+});
 
 /*For Assignment 3
 
