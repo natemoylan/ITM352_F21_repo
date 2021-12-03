@@ -14,6 +14,10 @@ var query_response = require("query-string");
 
 var temp_qty_data = {}; //Stores needed info
 
+// Set filename as variable for user_data.json
+var filename = './views/user_data.json';
+
+
 products.forEach((prod,i) => {prod.qty_available = 100;});
 
 // monitor all requests
@@ -37,8 +41,8 @@ app.get("/products.js", function (request, response, next){
 
 
 //For Login Page and Processing
-// Set filename as variable for user_data.json
-var filename = './user_data.json';
+
+
 
 //Checks if file exists
 if (fs.existsSync(filename)) {
@@ -73,7 +77,7 @@ app.get("/register", function (request, response) {
 
 /* Processing Register page */
 
-app.post("/register", function (request, response) {
+app.post("/process_register", function (request, response) {
     console.log(request.body);
 
     
@@ -141,7 +145,7 @@ app.post("/register", function (request, response) {
             temp_qty_data['email'] = user_data[username]['email'];
             console.log(temp_qty_data);
             let params = new URLSearchParams(temp_qty_data);
-            response.redirect('/receipt?' + params.toString());
+            response.redirect('/Receipt?' + params.toString());
     } else {
         request.body['reg_errors'] = JSON.stringify(reg_errors);
         let params = new URLSearchParams(request.body);
@@ -190,7 +194,6 @@ app.post("/Check", function (request, response, next) {
     //Validating the quantities and checking the availability of the tickets
     if (typeof POST['submit_purchase'] != undefined) {
 
-
         for (i = 0; i < products.length; i++) {
 
                 qty = POST[`quantity${i}`];
@@ -217,7 +220,7 @@ app.post("/Check", function (request, response, next) {
             let errObj = { 'error': JSON.stringify(noErr)};
             qString += '&' + query_response.stringify(errObj)
             temp_qty_data = request.body;
-            response.redirect("Receipt" + "?" + qString);
+            response.redirect("login" + "?" + qString);
             console.log("Redirected to Receipt");
         }else {
             response.redirect("UHManoaFootballTickets" + "?" + qString);
@@ -229,6 +232,76 @@ app.post("/Check", function (request, response, next) {
 
 }
 );
+
+app.get("/login", function (request, response, next) {
+    let POST = request.query;
+    var body = fs.readFileSync('./views/login.template', 'utf8');
+    response.send(eval('`' + body + '`')); //This renders the template string into a readable html format.
+    console.log('Login page loaded'); 
+
+});
+
+app.post("/process_login", function (request, response, next) {
+    let POST = request.body;
+
+    var logged_in = {};
+    logged_in['logged in'] = 'User Logged in';
+    //Assume users logged in.
+
+    //Validating user is logged in
+
+/* 
+    user_name= POST.username;
+    user_pass = POST.password;
+            
+    //Add and If statement for if the user is/isnt logged in either let the check process happen/ direct them to the login page and then when they sign in/register then they are brought to the cart.
+
+        if (checkLogin(input_username, input_password) == false) {
+            logged_in['not logged in'] = `INVALID LOGIN!`; //This will warn the customer of where their input was invalid
+        } else {
+            delete logged_in[array];
+        }
+
+    qString = query_response.stringify(POST);
+
+    //Add the code to check if the user is logged in or not.
+        if(JSON.stringify(logged_in)=== '{}') {
+//If there logged_in is false then redirect user back to the UHManoaFootballTickets, otherwise send them to the cart.
+            let errObj = { 'error': JSON.stringify(logged_in)};
+            qString += '&' + query_response.stringify(errObj)
+            temp_qty_data = request.body;
+            response.redirect("Receipt" + "?" + qString);
+            console.log("Redirected to Receipt");
+        }else {
+            response.redirect("login" + "?" + qString);
+            console.log("Redirected to product display");
+        }
+
+        */
+       
+        POST = request.body;
+        user_name = POST["username"];
+        user_pass = POST ["password"];
+
+        console.log("Username = " + user_name + "Password = " + user_pass);
+
+        if (user_data[user_name] != undefined){
+            if (user_data[user_name].password == user_pass){
+                // Good login
+                response.redirect('/Receipt');
+            } else{
+                // Bad Login, redirect
+                response.redirect ('/login')
+            }
+        } 
+       
+        next();
+    }
+
+
+);
+
+
 /*For Assignment 3
 
 //To send the user to the Invoice if the Data is valid
@@ -366,3 +439,4 @@ app.get("/UHManoaFootballTickets", function (request, response) {
         return str;
     }
 });
+
