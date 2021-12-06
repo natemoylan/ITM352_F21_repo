@@ -16,6 +16,60 @@ Created by: Peter Rivera-Concannon
     document.write(`Thanks`);
 </script>
 
+<script>
+    let params = (new URL(document.location)).searchParams;
+
+
+    if (params.has('username')) {
+          var username = params.get('username');
+        } else {
+          response.redirect ("./login");
+        }
+        if (params.has('email')) {
+          var email = params.get('email');
+        } else {
+            response.redirect ("./login");
+        }
+
+</script>
+
+
+
+
+
+
+
+<div class = "user-field">
+    <input id= username_tag type= "text" name = "username" required>
+    <span></span>
+    <label>Username</label>
+</div>
+
+<script>
+
+window.onload = function () {
+
+    let params = (new URL(document.location)).searchParams;
+    //if errorMessage is in qry string then put up alert with error message
+        if (params.has("loginMessage")) {
+        alert(params.get("loginMessage"));
+    }
+        //make username sticky after inputting wrong password
+        if (params.has('wrong_pass')) {
+        //username_tag is the ID of username box
+        username_tag.value = params.get('wrong_pass')
+        }
+
+        }
+
+
+
+</script>
+
+
+
+
+
 
 <!DOCTYPE html>
 <html lang ="en">
@@ -36,6 +90,32 @@ Created by: Peter Rivera-Concannon
 
 </head>
   <body>
+
+
+    <h1> Thank you for Your Purchase <br> <br>${params.get['username']} we will send a copy of your tickets to this email ${POST['email']}</h1>
+
+    <script>
+       
+       let params = (new URL(document.location)).searchParams;
+
+       if (params.has('username')) {
+          var username = params.get('username');
+        } else {
+          window.location.href = "./login";
+        }
+        if (params.has('email')) {
+          var email = params.get('email');
+        } else {
+          window.location.href = "./login";
+        }
+
+    </script>
+
+
+
+
+
+
         <img src="./images/Seating_Map.jpg" alt="Click here to view the Stadium Map!" style="float:right; border-style: inset; height:500px;width:500px;">
   <div style="float: left;">
     <h1> Thank you for Your Purchase</h1>

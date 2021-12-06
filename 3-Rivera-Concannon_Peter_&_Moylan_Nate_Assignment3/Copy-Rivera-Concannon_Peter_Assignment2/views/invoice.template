@@ -3,9 +3,23 @@ This page is used to display the Reciepts (invoice) page and check if any values
 Created by: Peter Rivera-Concannon
 -->
 
+<script>
+       
+       let params = (new URL(document.location)).searchParams;
 
+       if (params.has('username')) {
+          var username = params.get('username');
+        } else {
+          alert('Please log in before getting tickets!')
+          window.location.href = "./login";
+        }
+        if (params.has('email')) {
+          var email = params.get('email');
+        } else {
+          window.location.href = "./login";
+        }
 
-
+    </script>
 
 <!DOCTYPE html>
 <html lang ="en">
@@ -30,7 +44,7 @@ Created by: Peter Rivera-Concannon
   <body>
         <img src="./images/Seating_Map.jpg" alt="Click here to view the Stadium Map!" style="float:right; border-style: inset; height:500px;width:500px;">
   <div style="float: left;">
-    <h1> Thank you for Your Purchase <br> <br>${POST['username']}</h1>
+     <h1> Thank you for Your Purchase: <br>${POST['username']} <br><br>We will send a copy of your tickets to your email: <br>${POST['email']}</h1>
 
   
    
