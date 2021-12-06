@@ -94,7 +94,7 @@ app.post("/process_register", function (request, response) {
         reg_errors['fullname'] = 'Please only use letters for fullname';
         console.log('fullname bad');
     }
-    if (request.body.fullname.length > 30 || request.body.fullname < 1) {
+    if (request.body.fullname.length > 30 || request.body.fullname.length < 1) {
         reg_errors['fullname'] = 'Maximum 30 Characters';
         console.log('fullname length is bad')
     }
@@ -107,13 +107,6 @@ app.post("/process_register", function (request, response) {
         console.log('username length not good');
     }
 
-    //Checks if username is alread in use or not
-    for (i in filename) {
-        if (typeof reg_username == filename[i].username) {
-            reg_errors['username'] = 'Sorry, this username is already taken.';
-            console.log('username not defined');
-        }
-    }
     if (typeof reg_username == '') {
         reg_errors['username'] = 'Please enter a username.';
         console.log('username empty');
