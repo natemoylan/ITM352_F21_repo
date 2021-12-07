@@ -84,37 +84,52 @@ app.post("/process_register", function (request, response) {
 
     // Got from example code from Assignment 2 module
     //assumes no errors at first
-    var reg_errors = [];
+    var reg_errors = {};
+
+    //validates name, username, email, and password
+    reg_errors['fullname'] = [];
+    reg_errors['username'] = [];
+    reg_errors['email'] = [];
+    reg_errors['password'] = [];
+    reg_errors['confirm_password'] = [];
+
 
     // Fullname Validation// 
-    if (/^[A-Za-z, ]+$/.test(request.body.fullname)) {
+    if (/^[A-Za-z]+ [A-Za-z]+$/.test(request.body.fullname)) {
         console.log('fullname good');
     }
     else {
-        reg_errors['fullname'] = 'Please only use letters for fullname';
+        reg_errors['fullname'].push('Please only use letters for fullname');
         console.log('fullname bad');
     }
+    if(request.body.fullname == ""){
+        reg_errors['fullname'].push('This field cannot be empty!') 
+    }
     if (request.body.fullname.length > 30 || request.body.fullname.length < 1) {
-        reg_errors['fullname'] = 'Maximum 30 Characters';
+        reg_errors['fullname'].push('Maximum 30 Characters');
         console.log('fullname length is bad')
     }
 
     //Username Validation//
     var reg_username = request.body.username.toLowerCase(); // Requires username to be in lowercase
 
+    if(typeof user_login[reg_username] != 'undefined'){
+        reg_errors['username'].push('Username already taken!');
+    }
+
     if (request.body.username.length > 10 || request.body.username.length < 4) {
-        reg_errors['username'] = 'Username should be within 4 and 10 characters.';
+        reg_errors['username'].push('Username should be within 4 and 10 characters.');
         console.log('username length not good');
     }
 
     if (typeof reg_username == '') {
-        reg_errors['username'] = 'Please enter a username.';
+        reg_errors['username'].push ('Please enter a username.');
         console.log('username empty');
     }
     if (/^[0-9a-zA-Z]+$/.test(request.body.username)) {
         console.log('username has no other values')
     } else {
-        reg_errors['username'] = 'Numbers and letters only please.';
+        reg_errors['username'].push('Numbers and letters only please.');
         console.log('username has other values')
 
     }
@@ -124,21 +139,30 @@ app.post("/process_register", function (request, response) {
         console.log('Email good');
     }
     else {
-        reg_errors['email'] = 'Please enter a valid email (Ex: user@gmail.com';
+        reg_errors['email'].push('Please enter a valid email (Ex: user@gmail.com');
         console.log('email bad');
     }
 
     //Password Validation//
     if (request.body.password < 6) {
-        reg_errors['password'] = 'Please make a password longer than 6 characters.';
+        reg_errors['password'].push('Please make a password longer than 6 characters.');
         console.log('pass too short')
     }
 
     //Confirm Password Validation 
     if (request.body.password != request.body.confirm_password) {
-        reg_errors['confirm_password'] = 'Passwords do not match.';
+        reg_errors['confirm_password'].push('Passwords do not match.');
         console.log('pass dont match')
     }
+
+    // Requests name, username, and email
+    request.query.fullname = request.body.fullname;
+    request.query.username = request.body.username;
+    request.query.email = request.body.email;
+
+   
+
+    
 
     // If no errors then save new user data in JSON file and redirect to receipt
     console.log('reg_errors:', reg_errors);
@@ -161,9 +185,23 @@ app.post("/process_register", function (request, response) {
         let params = new URLSearchParams(temp_qty_data);
         response.redirect('/Receipt?' + params.toString());
     } else {
-        request.body['reg_errors'] = JSON.stringify(reg_errors);
-        let params = new URLSearchParams(request.body);
-        response.redirect('/register?' + params.toString());
+        // fix the JSON to show the reg_errors
+        request.body.errors_obj = JSON.stringify(reg_errors);
+        
+        // Makes sticky 
+        request.query.StickyUsername = request.body.username;
+        request.query.StickyName = request.body.fullname;
+        request.query.StickyEmail = request.body.email;
+
+        // Just some consoles to test out the queries
+        console.log('IN POST USERNAME IS: ' + request.query.StickyUsername);
+        console.log('IN POST FULLNAME IS: ' + request.query.StickyName);
+        console.log('IN POST EMAIL IS: ' + request.query.StickyEmail);
+
+        // data passing through the query currently works
+        // Things need to do now: add the <script> in register.template but still need to figure that out and modify it from Bryson's
+
+        response.redirect('/register?' + query_response.stringify(request.body));
         console.log('sent back')
         
     }

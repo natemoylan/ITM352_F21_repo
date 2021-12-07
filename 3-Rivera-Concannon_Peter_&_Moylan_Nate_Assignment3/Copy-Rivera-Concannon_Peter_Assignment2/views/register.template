@@ -17,32 +17,14 @@
        <!--
        Referenced from Li Xinfei
        -->
-            <script>
-                //try to get the register errors and if the user enter bad information,give a alert, then put the bad information back and let them change it
-                let params = (new URL(document.location)).searchParams;
-                window.onload = function () {
-                if (params.has('reg_errors')) {
-                    var errors = JSON.parse(params.get('reg_errors'));
-                    console.log("invalid");
-                    // make register form sticky
-                    for (i = 0; i < register.elements.length; i++) {
-                    register[i].value = params.get(register[i].name);
 
-
-                    if (typeof errors[register[i].name] != 'undefined') {
-                        document.getElementById(register[i].name + '_error').innerHTML = errors[register[i].name];
-                    }
-                    }
-
-                    alert('Please fix the following errors!');
-                }
-                }
-            </script>
-    
+  
        
     </head>
     
     <body>
+
+
         <form id="create-acc-form" action="/process_register" method="POST" name="register">
             <div class="title">
                 <h1>Register Account</h1>
@@ -52,7 +34,7 @@
                 <!--Full Name-->
                 <div class="input-group">
                     <label for="fullname"><b>Full Name</b></label>
-                    <div id='fullname_error' style="color: red;"></div>
+                    <div id='fullname_error'></div>
                     <input type="text" placeholder="Enter first and last name" class="form__input" name="fullname"
                         id="fullname">
                 </div>
@@ -60,7 +42,7 @@
                 <!--Username-->
                 <div class="input-group">
                     <label for="username"><b>Username</b></label>
-                    <div id='username_error' style="color: red;"></div>
+                    <div id='username_error'></div>
                     <input type="text" placeholder="Enter username" class="form__input" name="username" id="username"
                         >
                 </div>
@@ -68,14 +50,14 @@
                 <!--Email-->
                 <div class="input-group">
                     <label for="email"><b>Email</b></label>
-                    <div id='email_error' style="color: red;"></div>
+                    <div id='email_error'></div>
                     <input type="email" placeholder="Enter email" name="email" id="email">
                 </div>
     
                 <!--Password-->
                 <div class="input-group">
                     <label for="password"><b>Password</b></label>
-                    <div id='password_error' style="color: red;"></div>
+                    <div id='password_error'></div>
                     <input type="password" placeholder="Enter password" class="form__input" name="password" id="password"
                         >
                 </div>
@@ -83,7 +65,7 @@
                 <!--Confirm Password-->
                 <div class="input-group">
                     <label for="confirm_password"><b>Confirm Password</b></label>
-                    <div id='confirm_password_error' style="color: red;"></div>
+                    <div id='confirm_password_error'></div>
                     <input type="password" placeholder="Re-enter password" class="form__input" name="confirm_password"
                         id="confirm_password" >
                 </div>

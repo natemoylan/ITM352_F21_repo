@@ -80,4 +80,36 @@ app.get("/register", function (request, response) {
     response.send(str);
  });
 
+ app.post("/register", function (request, response) {
+    // process a simple register form
+    console.log("Got a POST to register");
+    POST = request.body;
+
+    user_name = POST["username"];
+    user_pass = POST["password"];
+    user_email = POST["email"];
+    user_pass2 = POST["repeat_password"];
+    query_response = "";
+
+    if (user_data[user_name] == undefined) {
+        console.log("Adding user: " + user_name);
+
+        user_data[user_name] = {};
+        user_data[user_name].name = user_name;
+        user_data[user_name].password = user_pass;
+        user_data[user_name].email = user_email;
+
+        data = JSON.stringify(user_data);
+        fs.writeFileSync(filename, data, "utf-8");
+
+        response.redirect("login");
+    } else {
+        query_response += "name_err=" + user_name;
+        console.log("Bad request to add user: " + user_name);
+        response.redirect("register" + "?" + query_response);
+    }
+});
+
+app.listen(8080, () => console.log(`listening on port 8080`));
+
  
