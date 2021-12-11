@@ -102,8 +102,8 @@ app.post("/process_register", function (request, response) {
         reg_errors['fullname'].push('Please only use letters for fullname');
         console.log('fullname bad');
     }
-    if(request.body.fullname == ""){
-        reg_errors['fullname'].push('This field cannot be empty!') 
+    if (request.body.fullname == "") {
+        reg_errors['fullname'].push('This field cannot be empty!')
     }
     if (request.body.fullname.length > 30 || request.body.fullname.length < 1) {
         reg_errors['fullname'].push('Maximum 30 Characters');
@@ -113,7 +113,7 @@ app.post("/process_register", function (request, response) {
     //Username Validation//
     var reg_username = request.body.username.toLowerCase(); // Requires username to be in lowercase
 
-    if(typeof user_login[reg_username] != 'undefined'){
+    if (typeof user_login[reg_username] != 'undefined') {
         reg_errors['username'].push('Username already taken!');
     }
 
@@ -123,7 +123,7 @@ app.post("/process_register", function (request, response) {
     }
 
     if (typeof reg_username == '') {
-        reg_errors['username'].push ('Please enter a username.');
+        reg_errors['username'].push('Please enter a username.');
         console.log('username empty');
     }
     if (/^[0-9a-zA-Z]+$/.test(request.body.username)) {
@@ -160,9 +160,9 @@ app.post("/process_register", function (request, response) {
     request.query.username = request.body.username;
     request.query.email = request.body.email;
 
-   
 
-    
+
+
 
     // If no errors then save new user data in JSON file and redirect to receipt
     console.log('reg_errors:', reg_errors);
@@ -187,7 +187,9 @@ app.post("/process_register", function (request, response) {
     } else {
         // fix the JSON to show the reg_errors
         request.body.errors_obj = JSON.stringify(reg_errors);
-        
+
+       
+
         // Makes sticky 
         request.query.StickyUsername = request.body.username;
         request.query.StickyName = request.body.fullname;
@@ -203,7 +205,7 @@ app.post("/process_register", function (request, response) {
 
         response.redirect('/register?' + query_response.stringify(request.body));
         console.log('sent back')
-        
+
     }
 });
 
@@ -305,18 +307,18 @@ app.post("/process_login", function (request, response) {
         if (user_login[the_username].password == POST.password) { //If the password is correct as well
             temp_qty_data['username'] = the_username;
             temp_qty_data['email'] = user_login[the_username].email;
-            let params = new URLSearchParams(temp_qty_data); 
+            let params = new URLSearchParams(temp_qty_data);
             response.redirect('/Receipt?' + params.toString()); //redirect to Receipt page with error
             return;
 
-        }else{//Password has an error
-           bad_login_str = 'Password is incorrect, please input the correct password!'
-           console.log('password incorrect')
-           request.query.the_username = the_username;
-           request.query.name = user_login[the_username].name;
+        } else {//Password has an error
+            bad_login_str = `Password is incorrect for username: ${the_username}!`;
+            console.log('password incorrect')
+            request.query.the_username = the_username;
+            request.query.name = user_login[the_username].name;
         }
 
-    }else {//Username has an error
+    } else {//Username has an error
         bad_login_str = 'Username does not exists. Please try again.'
         request.query.the_username = the_username;
     }
@@ -382,7 +384,7 @@ app.get("/Receipt", function (request, response, next) {
     response.send(eval('`' + body + '`')); //This renders the template string into a readable html format.
     console.log('Receipt page loaded');
 
-   
+
 
     //Referenced from Invoice 4
     //Function used to generate the item rows for the invoice
@@ -449,12 +451,12 @@ app.get("/UHManoaFootballTickets", function (request, response) {
             str += ` 
                 <section style="text-align: center">
                 <hr>
-                <h1>Sections: ${products[i].section_num}</h1>
-                <h2>Ticket price: <br> \$${products[i].price}</h2>
-                <h2><img src=${products[i].image} alt="Image"><img></h2> 
+                <h1>Sections:<p style="color: green;"> ${products[i].section_num}</p></h1>
+                <h2>Ticket price: <br><p style="color:green"> \$${products[i].price}</p></h2>
+                <h2><img src=${products[i].image} style="border: 5px solid green;" alt="Image"><img></h2> 
                 <h3><label for="inputQty" id="quantity${i}_label"> Tickets:</h3>
                 <input type="text" id="inputQty" placeholder="0" name = "quantity${i}" onkeyup = "checkQuantityTextbox(this, ${products[i].qty_available});">
-                <h2><label id="quantity_available${i}"> There are: ${products[i].qty_available} Seats Available </label></h2>
+                <h2><label id="quantity_available${i}"> There are:<p style="color: green;"> ${products[i].qty_available}</p> Seats Available! </label></h2>
                 </section>
                 `;
 
