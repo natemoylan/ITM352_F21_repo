@@ -3,21 +3,21 @@
         {
             "name": "Men's Manoa Shirt",
             "price": 25,
-            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/UHVC.jpg",
+            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/tops1.png",
             "qty_available": 100
         },
 
         {
             "name": "Women's Manoa Shirt",
             "price": 25,
-            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/UHVC.jpg",
+            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/tops2.jpeg",
             "qty_available": 100
         },
 
         {
             "name": "Kid's Manoa Shirt",
             "price": 10,
-            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/UHVC.jpg",
+            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/tops3.jpeg",
             "qty_available": 100
         }
     ],
@@ -26,21 +26,21 @@
         {
             "name": "Men's Sweatpants",
             "price": 30,
-            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/UHVC.jpg",
+            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/bottoms1.jpeg",
             "qty_available": 100
         },
 
         {
             "name": "Women's Sweatpants",
             "price": 30,
-            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/UHVC.jpg",
+            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/bottoms2.jpeg",
             "qty_available": 100
         },
 
         {
             "name": "Kid's Sweatpants",
             "price": 30,
-            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/UHVC.jpg",
+            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/bottoms3.jpeg",
             "qty_available": 100
         }
     ],
@@ -49,21 +49,21 @@
         {
             "name": "Hat",
             "price": 25,
-            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/UHVC.jpg",
+            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/hat.jpeg",
             "qty_available": 100
         },
 
         {
             "name": "Wristband",
             "price": 25,
-            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/UHVC.jpg",
+            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/wristband.jpeg",
             "qty_available": 100
         },
 
         {
             "name": "Lanyard",
             "price": 25,
-            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/UHVC.jpg",
+            "image": "https://raw.githubusercontent.com/natemoylan/ITM352_F21_repo/main/Copy-Rivera-Concannon_Peter_Assignment3/public/images/lanyard.jpeg",
             "qty_available": 100
         }
     ],
