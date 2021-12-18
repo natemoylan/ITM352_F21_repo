@@ -19,7 +19,7 @@ Created by: Peter Rivera-Concannon
           window.location.href = "./login";
         }
 
-    </script>
+</script>
 
 <!DOCTYPE html>
 <html lang ="en">

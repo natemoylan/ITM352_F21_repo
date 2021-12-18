@@ -20,6 +20,9 @@ app.use(cookieParser());
 app.use(myParser.urlencoded({ extended: true }));
 app.use(express.static('./public'));
 
+
+
+
 var num_users = 0;  // Total number of users on the site
 
 if (fs.existsSync(filename)) {

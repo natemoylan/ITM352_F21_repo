@@ -85,8 +85,7 @@ app.get("/register", function (request, response) {
 
 
 
-/* Processing Register page */
-
+// ---------- Processing Register ---------- // 
 app.post("/process_register", function (request, response) {
     console.log('request.body', request.body);
     console.log('user_login', user_login);
@@ -248,8 +247,10 @@ function checkInput(input, qty_available) {
 }
 */
 
+
+// ---------- Processing Accessories ---------- // 
+
 //Created with a Reference from Nate Moylan
-// Check for Tickets
 app.post("/Check_tickets", function (request, response, next) {
     let POST = request.body;
 
@@ -258,11 +259,13 @@ app.post("/Check_tickets", function (request, response, next) {
     //Assume No qty from start.
 
     //Validating the quantities and checking the availability of the tickets
-    if (typeof POST['submit_purchase'] != undefined) {
+    if (typeof POST['add_cart'] != undefined) {
         //try to find the name of the specific product
         for (i = 0; i < products['Tickets'].length; i++) {
 
             qty = POST[`quantity${i}`];
+
+            quantities[i] = qty;
 
             //Add and If statement for if the user is/isnt logged in either let the check process happen/ direct them to the login page and then when they sign in/register then they are brought to the cart.
 
@@ -286,11 +289,16 @@ app.post("/Check_tickets", function (request, response, next) {
             let errObj = { 'error': JSON.stringify(noErr) };
             qString += '&' + query_response.stringify(errObj)
             temp_qty_data = request.body;
-            response.redirect("./index.html" + "?" + qString);
-            console.log("Redirected to Receipt");
-        } else {
             response.redirect("UHManoaFootballTickets" + "?" + qString);
-            console.log("Redirected to product display");
+            console.log("Redirected to UHManoaFootballTickets");
+        } else {
+
+            // Need to make errors sticky with the txtbox value
+            let errObj = { 'error': JSON.stringify(noErr) };
+            qString += '&' + query_response.stringify(errObj)
+            temp_qty_data = request.body;
+            response.redirect("UHManoaFootballTickets" + "?" + qString);
+            console.log("Redirected to UHManoaFootballTickets with errors");
         }
 
         next();
@@ -298,6 +306,8 @@ app.post("/Check_tickets", function (request, response, next) {
 
 }
 );
+
+// ---------- Processing Bottoms ---------- // 
 
 // Check for bottoms
 app.post("/Check_bottoms", function (request, response, next) {
@@ -308,7 +318,7 @@ app.post("/Check_bottoms", function (request, response, next) {
     //Assume No qty from start.
 
     //Validating the quantities and checking the availability of the bottoms
-    if (typeof POST['submit_purchase'] != undefined) {
+    if (typeof POST['add_cart'] != undefined) {
         //try to find the name of the specific product
         for (i = 0; i < products['Bottoms'].length; i++) {
 
@@ -336,11 +346,11 @@ app.post("/Check_bottoms", function (request, response, next) {
             let errObj = { 'error': JSON.stringify(noErr) };
             qString += '&' + query_response.stringify(errObj)
             temp_qty_data = request.body;
-            response.redirect("./index.html" + "?" + qString);
-            console.log("Redirected to Receipt");
+            response.redirect("Bottoms" + "?" + qString);
+            console.log("Redirected to Bottoms");
         } else {
             response.redirect("Bottoms" + "?" + qString);
-            console.log("Redirected to product display");
+            console.log("Redirected to Bottoms with errors");
         }
 
         next();
@@ -348,6 +358,7 @@ app.post("/Check_bottoms", function (request, response, next) {
 
 });
 
+// ---------- Processing Tops ---------- // 
 
 // Check for tops
 app.post("/Check_tops", function (request, response, next) {
@@ -358,7 +369,7 @@ app.post("/Check_tops", function (request, response, next) {
     //Assume No qty from start.
 
     //Validating the quantities and checking the availability of the tops
-    if (typeof POST['submit_purchase'] != undefined) {
+    if (typeof POST['add_cart'] != undefined) {
         //try to find the name of the specific product
         for (i = 0; i < products['Tops'].length; i++) {
 
@@ -386,16 +397,18 @@ app.post("/Check_tops", function (request, response, next) {
             let errObj = { 'error': JSON.stringify(noErr) };
             qString += '&' + query_response.stringify(errObj)
             temp_qty_data = request.body;
-            response.redirect("./index.html" + "?" + qString);
-            console.log("Redirected to Receipt");
+            response.redirect("Tops" + "?" + qString);
+            console.log("Redirected to Tops");
         } else {
             response.redirect("Tops" + "?" + qString);
-            console.log("Redirected to product display");
+            console.log("Redirected to Tops with errors");
         }
 
         next();
     }
 });
+
+// ---------- Processing Accessories ---------- // 
 
 // Check for Accessories
 app.post("/Check_acc", function (request, response, next) {
@@ -406,7 +419,7 @@ app.post("/Check_acc", function (request, response, next) {
     //Assume No qty from start.
 
     //Validating the quantities and checking the availability of the accessories
-    if (typeof POST['submit_purchase'] != undefined) {
+    if (typeof POST['add_cart'] != undefined) {
         //try to find the name of the specific product
         for (i = 0; i < products['Accessories'].length; i++) {
 
@@ -434,11 +447,11 @@ app.post("/Check_acc", function (request, response, next) {
             let errObj = { 'error': JSON.stringify(noErr) };
             qString += '&' + query_response.stringify(errObj)
             temp_qty_data = request.body;
-            response.redirect("./index.html" + "?" + qString);
-            console.log("Redirected to Receipt");
+            response.redirect("Accessories" + "?" + qString);
+            console.log("Redirected to Accessories");
         } else {
             response.redirect("Accessories" + "?" + qString);
-            console.log("Redirected to product display");
+            console.log("Redirected to Accessories with errors");
         }
 
         next();
@@ -448,7 +461,7 @@ app.post("/Check_acc", function (request, response, next) {
 
 
 
-
+// ---------- GET Login ---------- // 
 app.get("/login", function (request, response, next) {
     let POST = request.body;
     var body = fs.readFileSync('./views/login.template', 'utf8');
@@ -457,6 +470,7 @@ app.get("/login", function (request, response, next) {
 
 });
 
+// ---------- Processing Login ---------- // 
 app.post("/process_login", function (request, response) {
     // Process login form POST and redirect to logged in page if ok, back to login page if not
     let POST = request.body;
@@ -489,7 +503,7 @@ app.post("/process_login", function (request, response) {
     response.redirect(`/login?loginMessage=${bad_login_str}&wrong_pass=${the_username}`); //redirect to login page with error
 });
 
-/*For Assignment 3
+
 //To send the user to the Invoice if the Data is valid
 app.get("/Cart", function (request, response, next) {
     let POST = request.query; //Given by Prof Kazman, This reads the query string so the data that is purchased can be processed and displayed on the cart page.
@@ -535,7 +549,48 @@ app.get("/Cart", function (request, response, next) {
     }
     //Need to make a form to store the data so we can make a cart page and and display their order to make sure it correct, if not then we'll have a button to let them go back to their order. And then this form will react with a post request to show the invoice. referenced from Lab 14
 });
-*/
+
+
+
+
+// ---------- Processing Add to Cart and Submit Cart ---------- // 
+
+// Checking quantities is from my previous Assignment 1 server
+app.post("/add_toCart", function (request, response) {
+    console.log(request.session);
+    let POST = request.body; // Data should be in the body
+    var qty = POST["prod_qty"];
+    // Check if the quantities are NonNegInt (from previous Assignment 1)
+    // Professor Port helped me create a product_key to post and save that session's quantities to the Shopping Cart
+    if (typeof POST['submitCart'] != 'undefined') {
+        product_key = POST["product_key"]; // POSTs the product_key
+        products = allProducts[product_key];
+        var hasvalidquantities = true; // Assumes that the variable is true (has valid quantities)
+        let quantities = [];
+        for (i = 0; i < products.length; i++) {
+            qty = POST[`quantity${i}`];
+            quantities[i] = qty;
+            // hasquantities = hasquantities || qty > 0; // If value is > 0, then it is valid
+            hasvalidquantities = hasvalidquantities && isNonNegInt(qty); // If quantity is both > 0 and valid
+        }
+    // NOTE: Following code will retain query string from products_display.html page 
+    // Kimberly Matutina helped modify this code to update my cart
+    if (hasvalidquantities) { // If valid, add the quantities to the cart/ session
+        if (typeof request.session.cart == "undefined") {
+            request.session.cart = {};
+        }
+            request.session.cart[product_key] = quantities; // Posts the user's session & quantities
+            POST["message"] = "Successfully added to cart!"; // Posts messages if successful
+        } else {
+            POST["message"] = "Invalid quantities, cart not updated!"; // Posts messages if successful
+        }
+        const stringified = qs.stringify(POST);
+        console.log(request.session);
+        response.redirect(`./products.html?${stringified}`);
+    }
+});
+
+
 
 app.get("/Receipt", function (request, response, next) {
 
@@ -735,6 +790,15 @@ app.get("/Accessories", function (request, response) {
     }
 
 
+});
+
+// -------------------- Cart Quantity (in navbar) -------------------- // 
+app.post('/cart_qty', function (req, res) {
+    var total = 0;
+    for (pkey in req.session.cart) {
+        total += req.session.cart[pkey].reduce((a, b) => a + b);
+    }
+    res.json({"qty": total});
 });
 
 
