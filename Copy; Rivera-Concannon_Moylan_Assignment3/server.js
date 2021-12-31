@@ -1,7 +1,8 @@
 /*
 FileName: server.js
-Authors: Peter Rivera-Concannon & Nate Moylan
-Purpose: Main server file.
+Authors: Peter Rivera-Concannon
+Purpose: Main server file. 
+        Referenced from many labs, homeworks, and some outside help
 */
 
 var products = require('./public/products.js');
@@ -13,21 +14,18 @@ var app = express();
 
 
 var myParser = require("body-parser");
-app.use(myParser.urlencoded({ extended: true}));
+app.use(myParser.urlencoded({ extended: true }));
 app.use(myParser.json());
 
 const { request } = require('express');
-
-
-// Set filename as variable for user_data.json
-var filename = './views/user_data.json';
 
 // Setup cookies and sessions
 var cookieParser = require('cookie-parser'); // Require cookie-parser
 var session = require('express-session'); // Require express sessions
 const nodemailer = require("nodemailer"); // Require nodemailer module
+const { info } = require('console');
 
-app.use(session({ secret: "ITM352" }));
+app.use(session({ secret: "ITM352", resave: false, saveUninitialized: true })); //Referenced from google, I (Peter) debugged an error that occured when there was no resave or saveUninitilaized
 app.use(cookieParser());
 
 // monitor all requests
@@ -49,20 +47,15 @@ app.get("/products.js", function (request, response, next) {
     console.log('GET products ran')
 });
 
+// Set filename as variable for user_data.json
+var user_info = './user_data.json';
 //Checks if file exists
-if (fs.existsSync(filename)) {
-    //Reads user_data.json
-    //Moved the require in here from Ex1
-    var data1 = fs.readFileSync(filename, 'utf-8');
-    var user_login = JSON.parse(data1);
-    console.log("User_data = ", user_login);
 
-    //Reads the stats of the file
-    fileStats = fs.statSync(filename);
-    console.log("File " + filename + " has " + fileStats.size + " characters");
+if (fs.existsSync(user_info)) {
+    data = fs.readFileSync(user_info, 'utf-8');
+    var user_login = JSON.parse(data);
 } else {
-    console.log("Enter the correct filename");
-    const user_login = [];
+    console.log(user_info + 'does not exist');
 }
 app.use(express.urlencoded({ extended: true }));
 
@@ -77,14 +70,7 @@ app.post("/process_register", function (request, response) {
 
     // Got from example code from Assignment 2 module
     //assumes no errors at first
-    var reg_errors = {};
-
-    //validates name, username, email, and password
-    reg_errors['fullname'] = [];
-    reg_errors['username'] = [];
-    reg_errors['email'] = [];
-    reg_errors['password'] = [];
-    reg_errors['confirm_password'] = [];
+    var reg_errors = [];
 
 
     // Fullname Validation// 
@@ -92,38 +78,38 @@ app.post("/process_register", function (request, response) {
         console.log('fullname good');
     }
     else {
-        reg_errors['fullname'].push('Please only use letters for fullname');
-        console.log('fullname bad');
+        reg_errors.push('Please only use letters for fullname');
+        console.log('ERROR: fullname invalid');
     }
     if (request.body.fullname == "") {
-        reg_errors['fullname'].push('This field cannot be empty!')
+        reg_errors.push('This field cannot be empty!')
     }
     if (request.body.fullname.length > 30 || request.body.fullname.length < 1) {
-        reg_errors['fullname'].push('Maximum 30 Characters');
-        console.log('fullname length is bad')
+        reg_errors.push('Maximum 30 Characters');
+        console.log('ERROR: fullname length is bad')
     }
 
     //Username Validation//
     var reg_username = request.body.username.toLowerCase(); // Requires username to be in lowercase
 
     if (typeof user_login[reg_username] != 'undefined') {
-        reg_errors['username'].push('Username already taken!');
+        reg_errors.push('Username already taken!');
     }
 
     if (request.body.username.length > 10 || request.body.username.length < 4) {
-        reg_errors['username'].push('Username should be within 4 and 10 characters.');
-        console.log('username length not good');
+        reg_errors.push('Username should be within 4 and 10 characters.');
+        console.log('ERROR: username length not good');
     }
 
     if (typeof reg_username == '') {
-        reg_errors['username'].push('Please enter a username.');
-        console.log('username empty');
+        reg_errors.push('Please enter a username.');
+        console.log('ERROR: username empty');
     }
     if (/^[0-9a-zA-Z]+$/.test(request.body.username)) {
         console.log('username has no other values')
     } else {
-        reg_errors['username'].push('Numbers and letters only please.');
-        console.log('username has other values')
+        reg_errors.push('Numbers and letters only please.');
+        console.log('ERROR: username has other values')
 
     }
 
@@ -132,19 +118,19 @@ app.post("/process_register", function (request, response) {
         console.log('Email good');
     }
     else {
-        reg_errors['email'].push('Please enter a valid email (Ex: user@gmail.com');
+        reg_errors.push('Please enter a valid email (Ex: user@gmail.com');
         console.log('email bad');
     }
 
     //Password Validation//
     if (request.body.password < 6) {
-        reg_errors['password'].push('Please make a password longer than 6 characters.');
+        reg_errors.push('Please make a password longer than 6 characters.');
         console.log('pass too short')
     }
 
     //Confirm Password Validation 
     if (request.body.password != request.body.confirm_password) {
-        reg_errors['confirm_password'].push('Passwords do not match.');
+        reg_errors.push('Passwords do not match.');
         console.log('pass dont match')
     }
 
@@ -157,23 +143,24 @@ app.post("/process_register", function (request, response) {
     console.log('reg_errors:', reg_errors);
 
     //using object.keys because we need to look at the length of each 'sub-array'
-    if (Object.keys(reg_errors).length == 0) {
+    if (reg_errors.length == 0) {
         console.log('no errors')
 
-        var username = request.body['username'].toLowerCase();
+        var username = request.body.username;
         user_login[username] = {};
-        user_login[username]["name"] = request.body['fullname'];
-        user_login[username]["password"] = request.body['password'];
-        user_login[username]["email"] = request.body['email'];
+        user_login[username].name = request.body.fullname;
+        user_login[username].password = request.body.password;
+        user_login[username].email = request.body.email;
         console.log('files were set: ', user_login[username]);
-        //var data = JSON.stringify(user_login);
-        fs.writeFileSync(filename, JSON.stringify(user_login), "utf-8");
+        data = JSON.stringify(user_login);
+        fs.writeFileSync(user_info, data, "utf-8");
         console.log('fs.writeFileSyncRan');
-        temp_qty_data['username'] = username;
-        temp_qty_data['email'] = user_login[username]['email'];
-        console.log(temp_qty_data);
-        let params = new URLSearchParams(temp_qty_data);
-        response.redirect('/cart.html' + params.toString());
+        the_username = user_login[username]['name'];
+        the_email = user_login[username]['email'];
+        var user_input = {"username": username, "name": user_login[username].name, "email": user_login[username].email};
+        console.log(user_input);
+        response.cookie("username", the_username).send
+        response.redirect('/index.html?' + qs.stringify(request.query));
     } else {
         // fix the JSON to show the reg_errors
         request.body.errors_obj = JSON.stringify(reg_errors);
@@ -191,7 +178,7 @@ app.post("/process_register", function (request, response) {
         // data passing through the query currently works
         // Things need to do now: add the <script> in register.template but still need to figure that out and modify it from Bryson's
 
-        response.redirect('/register.html' + query_response.stringify(request.body));
+        response.redirect('/register.html?' + qs.stringify(request.body));
         console.log('sent back')
 
     }
@@ -204,38 +191,37 @@ app.post("/process_login", function (request, response, next) {
     // Process login form POST and redirect to logged in page if ok, back to login page if not
     let POST = request.body;
     var the_username = POST.username.toLowerCase();
-    var Login_Error = '';
+    var Login_Error = [];
 
     if (typeof user_login[the_username] != 'undefined') { //if there is a matching username
         if (user_login[the_username].password == POST.password) { //If the password is correct as well
-            temp_qty_data['username'] = the_username;
-            temp_qty_data['email'] = user_login[the_username].email;
-            let params = new URLSearchParams(temp_qty_data);
-            response.redirect('/cart.html?' + params.toString()); //redirect to Receipt page with error
+            request.query.username = the_username;
+            request.query.name = user_login[request.query.username].name;
+            response.cookie('username', the_username);
+            response.redirect('/cart.html?' + qs.stringify(request.query)); //redirect to cart if username and password are correct
             return;
 
         } else {//Password has an error
-            Login_Error = `Password is incorrect for username: ${the_username}!`;
-            console.log('password incorrect')
+            Login_Error.push = (`Password is incorrect for username: ${the_username}!`);
+            console.log(Login_Error);
             request.query.the_username = the_username;
             request.query.name = user_login[the_username].name;
+            request.query.Login_Error = Login_Error.join(';');
         }
-
     } else {//Username has an error
-        Login_Error = 'Username does not exists. Please try again.'
+        Login_Error.push = ('Username does not exists. Please try again.');
+        console.log(Login_Error);
         request.query.the_username = the_username;
+        request.query.Login_Error = Login_Error.join(';');
     }
-
-
-    params = new URLSearchParams(request.query);
-    response.redirect(`/login.html?loginMessage=${Login_Error}&wrong_pass=${the_username}`); //redirect to login page with error
+    response.redirect('/login.html?' + qs.stringify(request.query)); //redirect to login page with error
 });
 
 ///////////////////////////
 /* TO PROCESS THE LOGOUT */
 ///////////////////////////
-app.get("/logout", function (request, response){
-    str = `<script> alert('${request.cookies["username"]} has logged out); location.href="./index.html";</script>`;
+app.get("/logout", function (request, response) {
+    str = `<script> alert('${request.cookies["username"]} has logged out); location.href="./index.html"</script>`;
     response.clearCookie('username'); //Clears var user_info
     response.send(str);
     request.session.destroy();
@@ -256,7 +242,7 @@ app.post("/Cart", function (request, response, next) {
     };
     if (haserrors == true) {
         message = "Invalid Quantites, Cart not Updated";
-    }else{
+    } else {
         message = "Valid Quantities, Cart Updated!";
         request.session.cart = request.body.quantities;
     }
@@ -265,7 +251,7 @@ app.post("/Cart", function (request, response, next) {
     response.redirect(ref_URL.toString());
 });
 
-app.post('/get_cart', function (request, response, next){
+app.post('/get_cart', function (request, response, next) {
     response.json(request.session.cart);
 })
 
@@ -273,39 +259,68 @@ app.post('/get_cart', function (request, response, next){
 /* Completes Purchase and emails the Invoice*/
 //////////////////////////////////////////////
 app.post("/purchase_cart", function (request, response) {
-        console.log(request.body.invoiceHTML);
-    var invoiceHTML = request.body.invoiceHTML;
-    var username = request.cookies["username"];
-    var email = user_data[username].email;
-    var transporter = nodemailer.createTransport({
-        host: "mail.hawaii.edu",
-        port: 25,
-        secure: false,
-        tls: {
-            rejectUnauthorized: false
+    //Removes quantity bought/inputted from user and takes away from quantity available
+        for (let product_key in request.session.cart) {
+            for (let i in request.session.cart[product_key]) {
+                products[product_key][i].quantity_available -= request.session.cart[product_key][i];
+            }
         }
-    });
-    var mailOptions = {
-        from: 'UHAthletics2021@gmail.com',
-        to: email,
-        subject: "UH Athletics Store Invoice",
-        html: invoiceHTML
-    };
-    transporter.sendMail(mailOptions, function (error, info){
-        if (error) {
-            str = 'Error Occured, Invoice not Emailed!';
-        } else{
-            str = `Invoice Sent to ${user_data[username].email}`;
+    
+        var user_info = JSON.parse(request.cookies["user_info"]); // sets user info as javascript
+        var the_email = user_info["email"]; //saves user email as variable
+        var username=user_info["username"];// needs to be saved for user verification on invoice. 
+    
+        console.log(the_email);//Checkign to see if user email is right, written in console. 
+        var invoice_str = `Thank you for your order ${username}! <table border><th>Quantity</th><th>Item</th>`;
+        //Table format from assignment 3 code examples 
+        var shopping_cart = request.session.cart;
+        for (product_key in products) {
+            for (i = 0; i < products[product_key].length; i++) {
+                if (typeof shopping_cart[product_key] == 'undefined') continue;
+                a_qty = shopping_cart[product_key][i];
+                if (a_qty > 0) {
+                    invoice_str += `<tr><td>${a_qty}</td><td>${products[product_key][i].name}</td><tr>`;
+                }
+            }
         }
-        response.join({"Status" : str});
-    });
-    request.session.destroy();
+        invoice_str += '</table>';
+        // Set up mail server. Only will work on UH Network due to security restrictions
+        var transporter = nodemailer.createTransport({
+            host: "mail.hawaii.edu",
+            port: 25,
+            secure: false, // use TLS
+            tls: {
+                // do not fail on invalid certs
+                rejectUnauthorized: false
+            }
+        });
+    
+        var user_email = 'user_info["email"]'; //sends email to user that is logged in. 
+        var mailOptions = {
+            from: 'soccersaverstore@soccer.com',
+            to: user_email,
+            subject: 'Your soccer saver invoice',
+            html: invoice_str
+        };
+    
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                invoice_str += `<br>There was an error and your invoice could not be emailed to ${user_info['email']} :(`;
+            } else {
+                invoice_str += `<br>Your invoice was mailed to ${user_email}`;
+            }
+            response.send(invoice_str);
+        });
+        
+        response.clearCookie('user_info'); //destroys cookie
+        request.session.destroy(); //delete the session, once email is sent
+    
 });
 
 ///////////////////////////
 /* To LOAD THE CART DATA */
 ///////////////////////////
-app.post("/loadCart", function (request, response){
+app.post("/loadCart", function (request, response) {
     if (typeof request.session.cart == "undefined") {
         request.session.cart = {};
     }
@@ -317,10 +332,10 @@ app.post("/loadCart", function (request, response){
 ////////////////////////////
 app.post('/cart_qty', function (request, response) {
     var tot = 0;
-    for (product_key in request.session.cart){
+    for (product_key in request.session.cart) {
         tot += request.session.cart[product_key].reduce((a, b) => a + b);
     }
-    response.join({"qty": tot});
+    response.json({ "qty": tot });
 });
 
 /////////////////////////////////////////////////////////
@@ -330,14 +345,22 @@ app.post("/Check", function (request, response) {
     let POST = request.body;
     var qty = POST["prod_qty"];
 
+
+
     //Validating the quantities and checking the availability of the tickets
-    if (typeof POST['submitCart'] != undefined) {
+    if (typeof POST['submitCart'] != 'undefined') {
+
         //try to find the name of the specific product
         product_key = POST["product_key"];
-        products = allProducts[product_key];
+        product = allProducts[product_key];
+      
+
+
         var hasvalidquantities = true;
         let quantities = [];
-        for (i = 0; i < products.length; i++) {
+
+
+        for (i = 0; i < product.length; i++) {
             qty = POST[`quantity${i}`];
             quantities[i] = qty;
             hasvalidquantities = hasvalidquantities && isValid(qty);
@@ -349,15 +372,15 @@ app.post("/Check", function (request, response) {
             }
             request.session.cart[product_key] = quantities; //POSTS the customer's session and qtys
             POST["message"] = "Added to Cart!";
-            }else {
+        } else {
             POST["message"] = "Invalid inputs, Quantites not added to cart!";
-            }
+        }
 
         const qString = qs.stringify(POST);
         console.log(request.session);
         response.redirect(`./products.html?${qString}`);
 
-}
+    }
 });
 
 function isValid(q, return_errors = false) {

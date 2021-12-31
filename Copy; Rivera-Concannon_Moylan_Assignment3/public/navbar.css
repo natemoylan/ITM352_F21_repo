@@ -1,0 +1,29 @@
+
+/* Configuring and styling navbar, borrowed sticky & active code from Alyssa Mencel */
+ul {
+    list-style-type:circle;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: lightgray;
+    position:sticky;
+    top: 0;
+    width: 100%;
+}
+li {
+   float:inline-end;
+   text-align: center;
+}
+li, a {
+    display: inline-block;
+    color: green;
+    font-size: 16pt;
+    text-align: center;
+    padding: 10px 10px;
+    text-decoration: none;
+}
+li a:hover:not(.active) {
+    background-color: yellowgreen;
+}
+
+
